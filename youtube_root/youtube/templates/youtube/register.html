@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}
+Register 
+{% endblock %}
+
+{% block messages %}
+    {% include "youtube/messages.html" with messages=messages%}
+{% endblock %}
+
+{% block body %}
+    <form action="." method="POST" role="form">
+        {% csrf_token %}
+        {{ form.as_table }}
+        <button type="submit">Register</button>
+    </form>
+{% endblock %}
