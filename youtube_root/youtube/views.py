@@ -28,6 +28,16 @@ class HomeView(View):
         return render(request, self.template_name, context)
 
 
+class VideoView(View):
+    template_name = 'youtube/video.html'
+    def get(self, request, id):
+        context = {}
+        messages.get_messages(request)
+        video = Video.objects.get(pk=id)
+        context['video'] = video
+        return render(request, self.template_name, context)
+
+
 class LogoutView(View):
     def get(self, request):
         logout(request)

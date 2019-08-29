@@ -7,4 +7,5 @@ urlpatterns = [
     path('register/', views.RegisterView.as_view(), name='register'),
     path('add_video/', views.AddVideoView.as_view(), name='add_video'),
     path('logout/', views.LogoutView.as_view(), name='logout'),
+    path('video/<id>/', views.VideoView.as_view(), name='video'),
 ]
