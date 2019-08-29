@@ -12,9 +12,7 @@
     </head>
     <body>
         {% include "navbar.html" %}
-
-        {% block messages %}
-        {% endblock %}
+        {% include "youtube/messages.html" with messages=messages%}
 
         {% block body %}
         {% endblock %}

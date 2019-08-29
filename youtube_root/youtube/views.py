@@ -109,9 +109,6 @@ class AddVideoView(View):
     @method_decorator(login_required)
     def post(self, request):
         form = AddVideoForm(request.POST, request.FILES)
-        print(form)
-        print(request.POST)
-        print(request.FILES)
 
         if form.is_valid():
             title = form.cleaned_data['title']

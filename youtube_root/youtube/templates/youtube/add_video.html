@@ -4,10 +4,6 @@
 Add Video 
 {% endblock %}
 
-{% block messages %}
-{% include "youtube/messages.html" with messages=messages%}
-{% endblock %}
-
 {% block body %}
 <form action="." method="POST" enctype="multipart/form-data">{% csrf_token %}
 

@@ -4,10 +4,6 @@
 Register 
 {% endblock %}
 
-{% block messages %}
-    {% include "youtube/messages.html" with messages=messages%}
-{% endblock %}
-
 {% block body %}
     <form action="." method="POST" role="form">
         {% csrf_token %}
