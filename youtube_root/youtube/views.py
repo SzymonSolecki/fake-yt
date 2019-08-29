@@ -10,6 +10,10 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
 from .forms import LoginForm, RegisterForm, AddVideoForm
+from .models import Video
+
+import string
+import random
 
 # Create your views here.
 
@@ -19,6 +23,8 @@ class HomeView(View):
 
     def get(self, request):
         context = {}
+        recent_videos = Video.objects.order_by('-date_added')[:8]
+        context['recent_videos'] = recent_videos
         return render(request, self.template_name, context)
 
 
@@ -99,3 +105,24 @@ class AddVideoView(View):
         form = AddVideoForm()
         context['form'] = form
         return render(request, self.template_name, context)
+
+    @method_decorator(login_required)
+    def post(self, request):
+        form = AddVideoForm(request.POST, request.FILES)
+        print(form)
+        print(request.POST)
+        print(request.FILES)
+
+        if form.is_valid():
+            title = form.cleaned_data['title']
+            description = form.cleaned_data['description']
+            file = form.cleaned_data['file']
+
+            new_video = Video(title=title,
+                              description=description,
+                              user=request.user,
+                              file=file)
+            new_video.save()
+            return redirect('/video/{}'.format(new_video.id))
+        messages.error(request, 'One of the field is incorrect')
+        return redirect('add_video')

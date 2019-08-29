@@ -3,6 +3,16 @@
 {% block title %}
 Add Video 
 {% endblock %}
+
+{% block messages %}
+{% include "youtube/messages.html" with messages=messages%}
+{% endblock %}
+
 {% block body %}
-{{form.as_p}}
+<form action="." method="POST" enctype="multipart/form-data">{% csrf_token %}
+
+    {{form.as_p}}
+
+    <button type="submit">Upload Video</button>
+</form>
 {% endblock %}
