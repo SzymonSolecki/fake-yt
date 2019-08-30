@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from .validators import validate_file_extension
 
 import os
 import uuid
@@ -16,7 +17,9 @@ def get_file_path(instance, filename):
 class Video(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
-    file = models.FileField(upload_to=get_file_path, blank=True, null=True)
+    file = models.FileField(upload_to=get_file_path, blank=True, null=True,
+                            validators=[validate_file_extension]
+                            )
     date_added = models.DateTimeField(blank=False, null=False, auto_now=True)
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE,
                              related_name='videos')

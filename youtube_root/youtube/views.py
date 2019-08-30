@@ -1,6 +1,7 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.generic.base import View
+from django.views.generic.edit import FormView
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
@@ -14,6 +15,8 @@ from .models import Video
 
 import string
 import random
+
+from django.core.exceptions import ValidationError
 
 # Create your views here.
 

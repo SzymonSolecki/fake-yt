@@ -9,8 +9,13 @@
 <p>{{video.title}}</p>
 <p>{{video.description}}</p>
 
+<video controls preload>
+    <source src="/media/{{video.file}}" type="video/webm">
+</video>
+
 {% if user.is_authenticated %}
 <form action="." method="POST">
+    {% csrf_token %}
     <table>
         {{form.as_table}}
     </table>

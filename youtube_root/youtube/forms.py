@@ -1,4 +1,5 @@
 from django import forms
+from .validators import validate_file_extension
 
 
 class LoginForm(forms.Form):
@@ -17,7 +18,7 @@ class RegisterForm(forms.Form):
 class AddVideoForm(forms.Form):
     title = forms.CharField(label='Title', max_length=100)
     description = forms.CharField(label='Description', widget=forms.Textarea)
-    file = forms.FileField()
+    file = forms.FileField(validators=[validate_file_extension])
 
 
 class AddCommentForm(forms.Form):
