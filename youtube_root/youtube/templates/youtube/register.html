@@ -7,17 +7,7 @@ Register
 {% block body %}
 <form action="." method="POST" role="form">
     {% csrf_token %}
-    <table>
-        {% for field in form %}
-        <ul>
-            {% for error in field.errors %}
-            <li>error</li>   
-            {% endfor %}
-        </ul>
-        {{field.label}}:
-        {{field}}
-        {% endfor %}
-    </table>
+    {% include "youtube/form_display.html" %}
     <button type="submit">Register</button>
 </form>
 {% endblock %}

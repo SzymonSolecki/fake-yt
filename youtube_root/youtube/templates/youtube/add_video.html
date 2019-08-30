@@ -6,9 +6,7 @@ Add Video
 
 {% block body %}
 <form action="." method="POST" enctype="multipart/form-data">{% csrf_token %}
-
-    {{form.as_p}}
-
+    {% include "youtube/form_display.html" %}
     <button type="submit">Upload Video</button>
 </form>
 {% endblock %}

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-from .validators import validate_file_extension
+from .validators import validate_file_extension, validate_user_existance
+from django.urls import reverse
 
 import os
 import uuid
@@ -22,9 +23,16 @@ class Video(models.Model):
                             )
     date_added = models.DateTimeField(blank=False, null=False, auto_now=True)
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE,
-                             related_name='videos')
+                             related_name='videos',
+                             validators=[validate_user_existance])
     like = models.IntegerField(default=0, blank=True, null=False)
     dislike = models.IntegerField(default=0, blank=True, null=False)
+
+    def get_absolute_url(self):
+        return reverse('video', kwargs={'pk': self.pk})
+
+    def __str__(self):
+        return self.title
 
 
 class Comment(models.Model):
@@ -34,3 +42,6 @@ class Comment(models.Model):
                               related_name='comments')
     video = models.ForeignKey(Video, on_delete=models.CASCADE,
                               related_name='comments')
+
+    def __str__(self):
+        return self.text

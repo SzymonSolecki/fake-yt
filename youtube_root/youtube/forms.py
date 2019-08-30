@@ -1,5 +1,7 @@
 from django import forms
 from .validators import validate_file_extension
+from django.contrib.auth.models import User
+from .models import Video, Comment
 
 
 class LoginForm(forms.Form):
@@ -8,17 +10,21 @@ class LoginForm(forms.Form):
                                widget=forms.PasswordInput())
 
 
-class RegisterForm(forms.Form):
+class RegisterForm(forms.ModelForm):
     username = forms.CharField(label='Username', max_length=40)
     email = forms.EmailField(label='Email', required=True)
     password = forms.CharField(label='Password', max_length=40,
                                widget=forms.PasswordInput())
 
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password']
 
-class AddVideoForm(forms.Form):
-    title = forms.CharField(label='Title', max_length=100)
-    description = forms.CharField(label='Description', widget=forms.Textarea)
-    file = forms.FileField(validators=[validate_file_extension])
+
+class AddVideoForm(forms.ModelForm):
+    class Meta:
+        model = Video
+        fields = ['title', 'description', 'file']
 
 
 class AddCommentForm(forms.Form):

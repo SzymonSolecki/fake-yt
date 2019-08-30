@@ -1,4 +1,5 @@
 {% extends "base.html" %} 
+
 {% block title %}
 Home 
 {% endblock %}
@@ -11,7 +12,7 @@ Home
    <h1>not logged in</h1> 
 {% endif %}
 
-{% for video in recent_videos %}
+{% for video in object_list %}
     <div>
         <h6>{{video.title}}</h6>
         <p>Uploaded by {{video.user}} on {{video.date_added}}. </p>
