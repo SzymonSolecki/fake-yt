@@ -7,4 +7,16 @@
 {% block body %}
 <p>{{video.id}}</p>
 <p>{{video.title}}</p>
+<p>{{video.description}}</p>
+
+{% if user.is_authenticated %}
+<form action="." method="POST">
+    <table>
+        {{form.as_table}}
+    </table>
+    <button type="submit">Add Comment</button>
+</form>
+{% endif %}
+
+{% include "youtube/comments.html" with comments=comments %}
 {% endblock %}

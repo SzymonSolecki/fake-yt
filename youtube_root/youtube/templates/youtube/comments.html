@@ -1,0 +1,7 @@
+{% for comment in comments %}
+<div style="border: 1px solid;">
+    {{comment.owner}}
+    {{comment.date_added}}
+    <p>{{comment.text}}</p>
+</div>
+{% endfor %}

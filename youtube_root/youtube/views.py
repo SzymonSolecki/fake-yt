@@ -9,7 +9,7 @@ from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
-from .forms import LoginForm, RegisterForm, AddVideoForm
+from .forms import LoginForm, RegisterForm, AddVideoForm, AddCommentForm
 from .models import Video
 
 import string
@@ -35,6 +35,13 @@ class VideoView(View):
         messages.get_messages(request)
         video = Video.objects.get(pk=id)
         context['video'] = video
+
+        form = AddCommentForm()
+        context['form'] = form
+
+        comments = video.comments.all()
+        context['comments'] = comments
+
         return render(request, self.template_name, context)
 
 

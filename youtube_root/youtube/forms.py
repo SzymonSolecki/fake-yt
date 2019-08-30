@@ -18,3 +18,7 @@ class AddVideoForm(forms.Form):
     title = forms.CharField(label='Title', max_length=100)
     description = forms.CharField(label='Description', widget=forms.Textarea)
     file = forms.FileField()
+
+
+class AddCommentForm(forms.Form):
+    text = forms.CharField(widget=forms.Textarea)

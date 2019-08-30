@@ -26,7 +26,7 @@ class Video(models.Model):
 
 class Comment(models.Model):
     text = models.TextField()
-    date_added = models.DateTimeField(blank=False, null=False)
+    date_added = models.DateTimeField(blank=False, null=False, auto_now=True)
     owner = models.ForeignKey('auth.User', on_delete=models.CASCADE,
                               related_name='comments')
     video = models.ForeignKey(Video, on_delete=models.CASCADE,
