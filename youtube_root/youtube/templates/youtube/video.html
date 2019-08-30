@@ -17,7 +17,14 @@
 <form action="." method="POST">
     {% csrf_token %}
     <table>
-        {{form.as_table}}
+        {% for field in form %}
+        <ul>
+            {% for error in field.errors %}
+            <li>error</li>   
+            {% endfor %}
+        </ul>
+        {{field}}
+        {% endfor %}
     </table>
     <button type="submit">Add Comment</button>
 </form>

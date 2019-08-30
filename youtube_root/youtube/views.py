@@ -33,6 +33,7 @@ class HomeView(View):
 
 class VideoView(View):
     template_name = 'youtube/video.html'
+
     def get(self, request, id):
         context = {}
         messages.get_messages(request)
@@ -69,7 +70,9 @@ class LoginView(View):
         return render(request, self.template_name, context)
 
     def post(self, request):
+        context = {}
         form = LoginForm(request.POST)
+        context['form'] = form
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
@@ -78,9 +81,8 @@ class LoginView(View):
                 login(request, user)
                 return redirect('home')
             messages.error(request, 'Provided data is incorrect.')
-            return redirect('login')
-        messages.error(request, 'Something went wrong.')
-        return redirect('login')
+            return render(request, self.template_name, context)
+        return render(request, self.template_name, context)
 
 
 class RegisterView(View):
@@ -98,7 +100,10 @@ class RegisterView(View):
         return render(request, self.template_name, context)
 
     def post(self, request):
+        context = {}
         form = RegisterForm(request.POST)
+        context['form'] = form
+
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
@@ -108,11 +113,10 @@ class RegisterView(View):
                 user.save()
             except IntegrityError:
                 messages.error(request, 'User exists.')
-                return redirect('register')
+                return render(request, self.template_name, context)
 
             return redirect('home')
-        messages.error(request, 'One of fields incorrect.')
-        return redirect('register')
+        return render(request, self.template_name, context)
 
 
 class AddVideoView(View):
@@ -129,6 +133,8 @@ class AddVideoView(View):
     @method_decorator(login_required)
     def post(self, request):
         form = AddVideoForm(request.POST, request.FILES)
+        context = {}
+        context['form'] = form
 
         if form.is_valid():
             title = form.cleaned_data['title']
@@ -141,5 +147,4 @@ class AddVideoView(View):
                               file=file)
             new_video.save()
             return redirect('/video/{}'.format(new_video.id))
-        messages.error(request, 'One of the field is incorrect')
-        return redirect('add_video')
+        return render(request, self.template_name, context)
