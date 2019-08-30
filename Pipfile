@@ -10,6 +10,7 @@ django = "==2.2.4"
 pillow = "*"
 django-debug-toolbar = "*"
 request = "*"
+django-cleanup = "*"
 
 [requires]
 python_version = "3.7"

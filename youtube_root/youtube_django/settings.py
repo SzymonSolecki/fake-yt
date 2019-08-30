@@ -39,8 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # third party apps
+    'django_cleanup',
+
     # my apps
-    'youtube'
+    'youtube',
 ]
 
 MIDDLEWARE = [

@@ -8,11 +8,14 @@ from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
-from .forms import LoginForm, RegisterForm, AddVideoForm, AddCommentForm
+from .forms import LoginForm, RegisterModelForm, AddVideoModelForm, AddCommentModelForm
 from .models import Video
 
 from django.core.exceptions import ValidationError
 
+from django.urls import reverse, reverse_lazy
+
+from django.contrib.auth.forms import AuthenticationForm
 # Create your views here.
 
 
@@ -33,7 +36,7 @@ class VideoView(generic.View):
         video = get_object_or_404(Video, pk=pk)
         context['video'] = video
 
-        form = AddCommentForm()
+        form = AddCommentModelForm()
         context['form'] = form
 
         comments = video.comments.all()
@@ -75,78 +78,20 @@ class LoginView(generic.View):
                 return redirect('home')
             messages.error(request, 'Provided data is incorrect.')
             return render(request, self.template_name, context)
+        print(form)
         return render(request, self.template_name, context)
 
 
-class RegisterView(generic.View):
+class RegisterView(generic.CreateView):
     template_name = 'youtube/register.html'
-
-    def get(self, request):
-        context = {}
-        messages.get_messages(request)
-
-        if request.user.is_authenticated:
-            return redirect('home')
-
-        form = RegisterForm()
-        context['form'] = form
-        return render(request, self.template_name, context)
-
-    def post(self, request):
-        context = {}
-        form = RegisterForm(request.POST)
-        context['form'] = form
-
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            email = form.cleaned_data['email']
-            try:
-                user = User.objects.create_user(username, email, password)
-                user.save()
-            except IntegrityError:
-                messages.error(request, 'User exists.')
-                return render(request, self.template_name, context)
-
-            return redirect('home')
-        return render(request, self.template_name, context)
-
-
-# class AddVideoView(generic.View):
-#     template_name = 'youtube/add_video.html'
-#
-#     @method_decorator(login_required)
-#     def get(self, request):
-#         context = {}
-#         messages.get_messages(request)
-#         form = AddVideoForm()
-#         context['form'] = form
-#         return render(request, self.template_name, context)
-#
-#     @method_decorator(login_required)
-#     def post(self, request):
-#         form = AddVideoForm(request.POST, request.FILES)
-#         context = {}
-#         context['form'] = form
-#
-#         if form.is_valid():
-#             title = form.cleaned_data['title']
-#             description = form.cleaned_data['description']
-#             file = form.cleaned_data['file']
-#
-#             new_video = Video(title=title,
-#                               description=description,
-#                               user=request.user,
-#                               file=file)
-#             new_video.save()
-#             return redirect('/video/{}'.format(new_video.id))
-#         return render(request, self.template_name, context)
+    form_class = RegisterModelForm
+    success_url = reverse_lazy('home')
 
 
 class AddVideoView(generic.CreateView):
     template_name = 'youtube/add_video.html'
-    model = Video
-    fields = ['title', 'description', 'file']
+    form_class = AddVideoModelForm
+    success_url = reverse_lazy('home')
 
     def form_valid(self, form):
         form.instance.user = self.request.user
