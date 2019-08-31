@@ -8,6 +8,7 @@ Login
 <form action="." method="POST" role="form">
     {% csrf_token %}
     {% include "youtube/form_display.html" with form=form%}
+
     <button type="submit">Login</button>
 </form>
 {% endblock %}

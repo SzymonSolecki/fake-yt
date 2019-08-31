@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django import forms
 
 
 def validate_file_extension(value):
@@ -11,8 +12,16 @@ def validate_file_extension(value):
 
 
 def validate_user_existance(username):
-    from django.core.exceptions import IntegrityError
     user = User.objects.get(pk=username)
 
     if user is not None:
-        raise IntegrityError(u'Giver user already exists')
+        raise forms.ValidationError(u'User with this username already exists.')
+
+
+def validate_email_existance(email):
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        pass
+    else:
+        raise forms.ValidationError(u'User with this email already exists.')

@@ -10,7 +10,7 @@
 <p>{{video.description}}</p>
 
 <video controls preload>
-    <source src="/media/{{video.file}}" type="video/webm">
+    <source src="{{video.file.url}}" type="video/webm">
 </video>
 
 {% if user.is_authenticated %}

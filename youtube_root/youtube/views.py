@@ -5,8 +5,8 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from django.db import IntegrityError
 
-from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from .forms import LoginForm, RegisterModelForm, AddVideoModelForm, AddCommentModelForm
 from .models import Video
@@ -51,44 +51,62 @@ class LogoutView(generic.View):
         return redirect('home')
 
 
-class LoginView(generic.View):
+# class LoginView(generic.View):
+    # template_name = 'youtube/login.html'
+
+    # def get(self, request):
+        # context = {}
+        # messages.get_messages(request)
+
+        # if request.user.is_authenticated:
+            # return redirect('home')
+
+        # form = LoginForm()
+        # context['form'] = form
+        # return render(request, self.template_name, context)
+
+    # def post(self, request):
+        # context = {}
+        # form = LoginForm(request.POST)
+        # context['form'] = form
+        # if form.is_valid():
+            # username = form.cleaned_data['username']
+            # password = form.cleaned_data['password']
+            # user = authenticate(request, username=username, password=password)
+            # if user is not None:
+                # login(request, user)
+                # return redirect('home')
+            # messages.error(request, 'Provided data is incorrect.')
+            # return render(request, self.template_name, context)
+        # print(form)
+        # return render(request, self.template_name, context)
+
+class LoginView(generic.FormView):
+    form_class = LoginForm
     template_name = 'youtube/login.html'
+    success_url = reverse_lazy('home')
 
-    def get(self, request):
-        context = {}
-        messages.get_messages(request)
-
-        if request.user.is_authenticated:
-            return redirect('home')
-
-        form = LoginForm()
-        context['form'] = form
-        return render(request, self.template_name, context)
-
-    def post(self, request):
-        context = {}
-        form = LoginForm(request.POST)
-        context['form'] = form
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect('home')
-            messages.error(request, 'Provided data is incorrect.')
-            return render(request, self.template_name, context)
-        print(form)
-        return render(request, self.template_name, context)
+    def form_valid(self, form):
+        username = form.cleaned_data['username']
+        password = form.cleaned_data['password']
+        user = authenticate(self.request, username=username, password=password)
+        login(self.request, user)
+        return super(LoginView, self).form_valid(form)
 
 
-class RegisterView(generic.CreateView):
+class RegisterView(UserPassesTestMixin, generic.CreateView):
     template_name = 'youtube/register.html'
     form_class = RegisterModelForm
     success_url = reverse_lazy('home')
 
+    def test_func(self):
+        return not self.request.user.is_authenticated
 
-class AddVideoView(generic.CreateView):
+    def handle_no_permission(self):
+        return redirect('home')
+
+
+class AddVideoView(LoginRequiredMixin, generic.CreateView):
     template_name = 'youtube/add_video.html'
     form_class = AddVideoModelForm
     success_url = reverse_lazy('home')
