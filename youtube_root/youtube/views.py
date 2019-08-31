@@ -1,22 +1,14 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404
 from django.views import generic
-from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
-from django.db import IntegrityError
 
-from django.utils.decorators import method_decorator
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from .forms import LoginForm, RegisterModelForm, AddVideoModelForm, AddCommentModelForm
-from .models import Video
-
-from django.core.exceptions import ValidationError
+from .models import Video, Comment, Like
 
 from django.urls import reverse, reverse_lazy
-
-from django.contrib.auth.forms import AuthenticationForm
-# Create your views here.
 
 
 class HomeView(generic.ListView):
@@ -27,31 +19,88 @@ class HomeView(generic.ListView):
         return recent_videos
 
 
-class VideoView(generic.CreateView):
-    template_name = 'youtube/video.html'
-    form_class = AddCommentModelForm
-    success_url = '.'
+class AddCommentView(LoginRequiredMixin, generic.RedirectView):
+    pattern_name = 'video'
 
-    def form_valid(self, form):
-        form.instance.owner = self.request.user
-        p = self.kwargs.get('pk')
-        form.instance.video = self.get_context_data()['video']
-        return super(VideoView, self).form_valid(form)
+    def post(self, *args, **kwargs):
+        form = AddCommentModelForm(self.request.POST)
+        comment = Comment(owner=self.request.user,
+                          video=Video.objects.get(pk=kwargs.get('pk')))
+        if form.is_valid():
+            comment.text = form.cleaned_data['text']
+            comment.save()
+        return super().post(*args, **kwargs)
+
+
+class VideoView(generic.DetailView):
+    template_name = 'youtube/video.html'
+    model = Video
 
     def get_context_data(self, **kwargs):
         video = get_object_or_404(Video, pk=self.kwargs.get('pk'))
         kwargs['video'] = video
-        kwargs['comments'] = video.comments.all()
+        kwargs['comments'] = video.comments.order_by('-date_added')
+        kwargs['likes_count'] = video.likes.filter(value=1).count()
+        kwargs['dislikes_count'] = video.likes.filter(value=0).count()
+        if self.request.user.is_authenticated:
+            try:
+                like = Like.objects.get(video=video, user=self.request.user)
+            except Like.DoesNotExist:
+                kwargs['like'] = -1
+            else:
+                kwargs['like'] = like.value
+
+        kwargs['form'] = AddCommentModelForm
         return super(VideoView, self).get_context_data(**kwargs)
 
 
-class LogoutView(generic.View):
-    def get(self, request):
-        logout(request)
-        return redirect('home')
+class LikeVideoView(LoginRequiredMixin, generic.RedirectView):
+    pattern_name = 'video'
+
+    def get_redirect_url(self, *args, **kwargs):
+        video = Video.objects.get(pk=kwargs['pk'])
+        try:
+            like = Like.objects.get(user=self.request.user, video=video)
+        except Like.DoesNotExist:
+            like = Like(user=self.request.user, video=video, value=1)
+            like.save()
+        else:
+            if like.value == 0:
+                like.value = 1
+                like.save()
+            else:
+                like.delete()
+        return super().get_redirect_url(*args, **kwargs)
 
 
-class LoginView(generic.FormView):
+class DislikeVideoView(LoginRequiredMixin, generic.RedirectView):
+    pattern_name = 'video'
+
+    def get_redirect_url(self, *args, **kwargs):
+        video = Video.objects.get(pk=kwargs['pk'])
+        try:
+            like = Like.objects.get(user=self.request.user, video=video)
+        except Like.DoesNotExist:
+            like = Like(user=self.request.user, video=video, value=0)
+            like.save()
+        else:
+            if like.value == 1:
+                like.value = 0
+                like.save()
+            else:
+                like.delete()
+        return super().get_redirect_url(*args, **kwargs)
+
+
+class LogoutView(generic.RedirectView):
+    pattern_name = 'home'
+
+    def get_redirect_url(self, *args, **kwargs):
+        logout(self.request)
+        return super().get_redirect_url(*args, **kwargs)
+
+
+class LoginView(UserPassesTestMixin, generic.FormView):
     form_class = LoginForm
     template_name = 'youtube/login.html'
     success_url = reverse_lazy('home')
@@ -63,6 +112,14 @@ class LoginView(generic.FormView):
         if user is not None:
             login(self.request, user)
         return super(LoginView, self).form_valid(form)
+
+    def test_func(self):
+        return not self.request.user.is_authenticated
+
+    def handle_no_permission(self):
+        messages.error(
+            self.request, 'You are already logged in. Dont mess with URL.')
+        return redirect('home')
 
 
 class RegisterView(UserPassesTestMixin, generic.CreateView):

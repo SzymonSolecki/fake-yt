@@ -9,12 +9,17 @@
 <p>{{video.title}}</p>
 <p>{{video.description}}</p>
 
+<h1 class="{% if like == 1%} chosen {% endif %}"> <a href="like">Like</a></h1>
+<h1 class="{% if like == 0%} chosen {% endif %}"> <a href="dislike">Dislike</a></h1>
+<h1>{{likes_count}}</h1>
+<h1>{{dislikes_count}}</h1>
+
 <video controls preload>
     <source src="{{video.file.url}}" type="video/webm">
 </video>
 
 {% if user.is_authenticated %}
-<form action="." method="POST">
+<form action="comment" method="POST">
     {% csrf_token %}
     {% include "youtube/form_display.html" %}
     <button type="submit">Add Comment</button>

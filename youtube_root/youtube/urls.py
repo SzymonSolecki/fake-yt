@@ -8,4 +8,7 @@ urlpatterns = [
     path('add_video/', views.AddVideoView.as_view(), name='add_video'),
     path('logout/', views.LogoutView.as_view(), name='logout'),
     path('video/<pk>/', views.VideoView.as_view(), name='video'),
+    path('video/<pk>/comment', views.AddCommentView.as_view()),
+    path('video/<pk>/like', views.LikeVideoView.as_view()),
+    path('video/<pk>/dislike', views.DislikeVideoView.as_view()),
 ]

@@ -6,12 +6,6 @@ Home
 
 {% block body %}
 
-{% if user.is_authenticated %}
-   <h1>logged in</h1> 
-{% else %}
-   <h1>not logged in</h1> 
-{% endif %}
-
 {% for video in object_list %}
     <div>
         <h6>{{video.title}}</h6>
