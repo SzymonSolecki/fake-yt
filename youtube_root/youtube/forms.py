@@ -5,11 +5,6 @@ from .models import Video, Comment
 from .validators import validate_email_existance
 
 
-# class LoginForm(forms.Form):
-# username = forms.CharField(label='Username', max_length=40)
-# password = forms.CharField(label='Password', max_length=40,
-# widget=forms.PasswordInput())
-
 class LoginForm(AuthenticationForm):
 
     def confirm_login_allowed(self, user):
@@ -27,9 +22,6 @@ class RegisterModelForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2']
-        # widgets = {
-        # 'password': forms.PasswordInput
-        # }
 
 
 class AddVideoModelForm(forms.ModelForm):
