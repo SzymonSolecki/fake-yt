@@ -27,22 +27,22 @@ class HomeView(generic.ListView):
         return recent_videos
 
 
-class VideoView(generic.View):
+class VideoView(generic.CreateView):
     template_name = 'youtube/video.html'
+    form_class = AddCommentModelForm
+    success_url = '.'
 
-    def get(self, request, pk):
-        context = {}
-        messages.get_messages(request)
-        video = get_object_or_404(Video, pk=pk)
-        context['video'] = video
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        p = self.kwargs.get('pk')
+        form.instance.video = self.get_context_data()['video']
+        return super(VideoView, self).form_valid(form)
 
-        form = AddCommentModelForm()
-        context['form'] = form
-
-        comments = video.comments.all()
-        context['comments'] = comments
-
-        return render(request, self.template_name, context)
+    def get_context_data(self, **kwargs):
+        video = get_object_or_404(Video, pk=self.kwargs.get('pk'))
+        kwargs['video'] = video
+        kwargs['comments'] = video.comments.all()
+        return super(VideoView, self).get_context_data(**kwargs)
 
 
 class LogoutView(generic.View):
@@ -74,6 +74,8 @@ class RegisterView(UserPassesTestMixin, generic.CreateView):
         return not self.request.user.is_authenticated
 
     def handle_no_permission(self):
+        messages.error(
+            self.request, 'You are already logged in. Dont mess with URL.')
         return redirect('home')
 
 
