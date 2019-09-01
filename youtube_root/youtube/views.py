@@ -59,12 +59,9 @@ class LikeVideoView(LoginRequiredMixin, generic.RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         video = Video.objects.get(pk=kwargs['pk'])
-        try:
-            like = Like.objects.get(user=self.request.user, video=video)
-        except Like.DoesNotExist:
-            like = Like(user=self.request.user, video=video, value=1)
-            like.save()
-        else:
+        like, created = Like.objects.get_or_create(
+            user=self.request.user, video=video)
+        if not created:
             if like.value == 0:
                 like.value = 1
                 like.save()
@@ -78,12 +75,9 @@ class DislikeVideoView(LoginRequiredMixin, generic.RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         video = Video.objects.get(pk=kwargs['pk'])
-        try:
-            like = Like.objects.get(user=self.request.user, video=video)
-        except Like.DoesNotExist:
-            like = Like(user=self.request.user, video=video, value=0)
-            like.save()
-        else:
+        like, created = Like.objects.get_or_create(
+            user=self.request.user, video=video)
+        if not created:
             if like.value == 1:
                 like.value = 0
                 like.save()
