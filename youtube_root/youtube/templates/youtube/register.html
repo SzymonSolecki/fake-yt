@@ -7,7 +7,8 @@ Register
 {% block body %}
 <form action="." method="POST" role="form">
     {% csrf_token %}
-    {% include "youtube/form_display.html" %}
-    <button type="submit">Register</button>
+    {% include "youtube/form_display.html" with form=form%}
+
+    <button type="submit" class="btn btn-primary">Register</button>
 </form>
 {% endblock %}

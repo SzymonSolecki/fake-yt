@@ -9,6 +9,6 @@ Login
     {% csrf_token %}
     {% include "youtube/form_display.html" with form=form%}
 
-    <button type="submit">Login</button>
+    <button type="submit" class="btn btn-primary">Login</button>
 </form>
 {% endblock %}

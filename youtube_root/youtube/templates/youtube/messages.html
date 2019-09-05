@@ -1,5 +1,13 @@
+{% load custom_tags %}
+
 {% if messages %}
     {% for message in messages %}
-        <p>{{message}}</p>   
+    {% get_bootstrap_alert_msg_css_name message.tags as alert_tag %}
+    <div class="alert alert-{{alert_tag}} alert-dismissible fade show" role="alert">
+        {{message}}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
     {% endfor %}
 {% endif %}

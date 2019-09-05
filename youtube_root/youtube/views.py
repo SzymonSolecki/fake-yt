@@ -4,6 +4,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.messages.views import SuccessMessageMixin
 
 from .forms import LoginForm, RegisterModelForm, AddVideoModelForm, AddCommentModelForm
 from .models import Video, Comment, Like
@@ -29,6 +30,9 @@ class AddCommentView(LoginRequiredMixin, generic.RedirectView):
         if form.is_valid():
             comment.text = form.cleaned_data['text']
             comment.save()
+            messages.success('Comment added successfully.')
+        else:
+            messages.error(self.request, "Comment not added.")
         return super().post(*args, **kwargs)
 
 
@@ -88,16 +92,20 @@ class DislikeVideoView(LoginRequiredMixin, generic.RedirectView):
 
 class LogoutView(generic.RedirectView):
     pattern_name = 'home'
+    success_message = 'Logged in successfully.'
 
     def get_redirect_url(self, *args, **kwargs):
         logout(self.request)
+        messages.success(
+            self.request, "You have been successfully logged out.")
         return super().get_redirect_url(*args, **kwargs)
 
 
-class LoginView(UserPassesTestMixin, generic.FormView):
+class LoginView(UserPassesTestMixin, SuccessMessageMixin, generic.FormView):
     form_class = LoginForm
     template_name = 'youtube/login.html'
     success_url = reverse_lazy('home')
+    success_message = 'Logged in successfully.'
 
     def form_valid(self, form):
         username = form.cleaned_data['username']
@@ -120,6 +128,7 @@ class RegisterView(UserPassesTestMixin, generic.CreateView):
     template_name = 'youtube/register.html'
     form_class = RegisterModelForm
     success_url = reverse_lazy('home')
+    success_message = 'User created successfully.'
 
     def test_func(self):
         return not self.request.user.is_authenticated
@@ -130,10 +139,11 @@ class RegisterView(UserPassesTestMixin, generic.CreateView):
         return redirect('home')
 
 
-class AddVideoView(LoginRequiredMixin, generic.CreateView):
+class AddVideoView(LoginRequiredMixin, SuccessMessageMixin, generic.CreateView):
     template_name = 'youtube/add_video.html'
     form_class = AddVideoModelForm
     success_url = reverse_lazy('home')
+    success_message = 'Video added successfully.'
 
     def form_valid(self, form):
         form.instance.user = self.request.user

@@ -18,7 +18,7 @@ def get_file_path(instance, filename):
 
 class Video(models.Model):
     title = models.CharField(max_length=100)
-    description = models.TextField()
+    description = models.TextField(blank=True)
 
     # Uploads video to path return from function. Function get_file_path
     # is used to prevent two the same filenames.
