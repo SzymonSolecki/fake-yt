@@ -26,7 +26,7 @@ SECRET_KEY = '!77fo5y9p_uz3l2g&5d+j1f=oem_ho=93!%z!$g@0e&z6pera7'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.100.13', 'localhost']
 
 
 # Application definition
@@ -135,5 +135,3 @@ LOGOUT_REDIRECT_URL = 'home'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-MESSAGE_TAGS = {message_constants.ERROR: 'danger'}

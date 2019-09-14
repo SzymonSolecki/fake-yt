@@ -1,3 +1,4 @@
+from time import time
 from django import template
 register = template.Library()
 

@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from .validators import validate_file_extension, validate_user_existance
+from .validators import validate_user_existance, FileValidator
 from django.urls import reverse
 
 import os
@@ -11,9 +11,11 @@ import uuid
 
 # Method used to create unique filenames for uploaded videos.
 def get_file_path(instance, filename):
-    extension = filename.split('.')[-1]
-    filename = '{}.{}'.format(uuid.uuid4(), extension)
-    return os.path.join('video', filename)
+    filename, extension = os.path.splitext(filename)
+
+    file_id = str(uuid.uuid4())
+    filename_to_save = '{}{}'.format(file_id, extension)
+    return os.path.join('video', file_id, filename_to_save)
 
 
 class Video(models.Model):
@@ -22,13 +24,13 @@ class Video(models.Model):
 
     # Uploads video to path return from function. Function get_file_path
     # is used to prevent two the same filenames.
-    file = models.FileField(upload_to=get_file_path, blank=False, null=True,
-                            validators=[validate_file_extension]
-                            )
+    file = models.FileField(upload_to=get_file_path, blank=False, null=True, validators=[
+                            FileValidator(content_types=('video/mp4', 'video/webm',))])
     date_added = models.DateTimeField(blank=False, null=False, auto_now=True)
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE,
                              related_name='videos',
                              )
+    views = models.BigIntegerField(default=0, null=False, blank=True)
 
     def get_absolute_url(self):
         return reverse('video', kwargs={'pk': self.pk})

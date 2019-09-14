@@ -7,11 +7,6 @@ Home
 {% block body %}
 
 {% for video in object_list %}
-    <div>
-        <h6>{{video.title}}</h6>
-        <p>Uploaded by {{video.user}} on {{video.date_added}}. </p>
-        <p>{{video.description}}</p>
-        <p><a href='/video/{{ video.id }}'>Watch Video</a></p>
-    </div>
+{% include "youtube/video_list_item.html" with video=video %}
 {% endfor %}
 {% endblock %}

@@ -1,8 +1,8 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .models import Video, Comment
-from .validators import validate_email_existance
+from .models import Video, Comment, get_file_path
+from .validators import validate_email_existance, FileValidator
 
 
 class LoginForm(AuthenticationForm):

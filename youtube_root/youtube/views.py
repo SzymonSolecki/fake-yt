@@ -30,7 +30,7 @@ class AddCommentView(LoginRequiredMixin, generic.RedirectView):
         if form.is_valid():
             comment.text = form.cleaned_data['text']
             comment.save()
-            messages.success('Comment added successfully.')
+            messages.success(self.request, 'Comment added successfully.')
         else:
             messages.error(self.request, "Comment not added.")
         return super().post(*args, **kwargs)
@@ -39,6 +39,12 @@ class AddCommentView(LoginRequiredMixin, generic.RedirectView):
 class VideoView(generic.DetailView):
     template_name = 'youtube/video.html'
     model = Video
+
+    def get(self, *args, **kwargs):
+        video = get_object_or_404(Video, pk=self.kwargs.get('pk'))
+        video.views += 1
+        video.save()
+        return super(VideoView, self).get(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         video = get_object_or_404(Video, pk=self.kwargs.get('pk'))
@@ -71,6 +77,9 @@ class LikeVideoView(LoginRequiredMixin, generic.RedirectView):
                 like.save()
             else:
                 like.delete()
+        else:
+            like.value = 1
+            like.save()
         return super().get_redirect_url(*args, **kwargs)
 
 
@@ -87,6 +96,9 @@ class DislikeVideoView(LoginRequiredMixin, generic.RedirectView):
                 like.save()
             else:
                 like.delete()
+        else:
+            like.value = 0
+            like.save()
         return super().get_redirect_url(*args, **kwargs)
 
 

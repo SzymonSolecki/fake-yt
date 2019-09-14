@@ -11,6 +11,7 @@ pillow = "*"
 django-debug-toolbar = "*"
 request = "*"
 django-cleanup = "*"
+python-magic = "*"
 
 [requires]
 python_version = "3.7"
