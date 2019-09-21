@@ -1,12 +1,15 @@
 {% load custom_tags %}
-<div class="card text-center border-secondary video-list-item">
-    <div class="card-header text-white bg-dark">
-        <h5 class="card-title">{{video.title}}</h5>
+<div class="col-md-3">
+
+    <a href="{% url 'video' video.id %}">
+    <div class="card text-center border-secondary video-list-item">
+        <div class="card-header text-white bg-dark">
+            <b>{{video.title}}</b>
+        </div>
+        <div class="card-body">
+            <p class="card-subtitle text-muted">Uploaded by {{video.user.username}}</p>
+            <p class="card-subtitle text-muted">{{video.date_added|date:"N j Y G:i"}}</p>
+        </div>
     </div>
-    <div class="card-body">
-        <p class="card-subtitle text-muted">Uploaded by {{video.user.username}}</p>
-        <p class="card-subtitle text-muted">{{video.date_added|date:"N j Y G:i"}}</p>
-        <p class="card-text">{{video.description|truncatechars:150}}</p>
-        <a class="btn btn-primary" href="{% url 'video' video.id %}">Watch</a>
-    </div>
+    </a>
 </div>

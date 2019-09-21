@@ -54,6 +54,8 @@ class AddCommentModelForm(forms.ModelForm):
         for key, field in self.fields.items():
             field.widget.attrs.update({'class': 'form-control'})
 
+        self.fields['text'].label = "Comment input field"
+
     class Meta:
         model = Comment
         fields = ['text']

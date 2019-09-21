@@ -5,29 +5,54 @@
 {% endblock %}
 
 {% block body %}
-<p>{{video.id}}</p>
-<p>{{video.title}}</p>
-<p>{{video.description}}</p>
-<p>{{video.views}}</p>
 
-{% if user.is_authenticated %}
-<h1 class="{% if like == 1%} chosen {% endif %}"> <a href="like">Like</a></h1>
-<h1 class="{% if like == 0%} chosen {% endif %}"> <a href="dislike">Dislike</a></h1>
-{% endif %}
-
-<h1>{{likes_count}}</h1>
-<h1>{{dislikes_count}}</h1>
-
-<div class="embed-responsive embed-responsive-16by9">
+<div class="embed-responsive embed-responsive-16by9 video-player card">
     <video controls preload class="embed-responsive-item">
         <source src="{{video.file.url}}" type="video/webm">
     </video>
 </div>
+
+<div class="lead video-title">
+    <h2>{{video.title}}</h2>
+</div>
+
+<div class="info-bar">
+    <div class="float-left">
+        {{video.views}} views |
+        Published on {{video.date_added|date:"M j, Y"}}
+    </div>
+
+    <div class="float-right">
+        <div class="float-left counter">
+            <a class="{% if like == 1%} text-primary {% endif %}" href="like"><i class="fas fa-thumbs-up"></i></a>
+            {{likes_count}}
+        </div>
+        <div class="float-left counter">
+            <a class="{% if like == 0%} text-primary {% endif %}" href="dislike"><i class="fas fa-thumbs-down"></i></a>
+            {{dislikes_count}}
+        </div>
+    </div>
+</div>
+<br>
+
+<hr>
+
+<div>
+    <p>
+        <button class="btn btn-primary" type="button" data-toggle="collapse"
+                                                      data-target="#collapseExample" aria-expanded="false"
+                                                                                     aria-controls="collapseExample">Description</button>
+    </p>
+    <div class="collapse" id="collapseExample">
+        <div class="card card-body">{{video.description}}</div>
+    </div>
+</div>
+
 {% if user.is_authenticated %}
 <form action="comment" method="POST">
     {% csrf_token %}
     {% include "youtube/form_display.html" %}
-    <button type="submit">Add Comment</button>
+    <button class="btn btn-primary" type="submit">Add Comment</button>
 </form>
 {% endif %}
 

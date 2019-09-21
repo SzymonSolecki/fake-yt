@@ -12,6 +12,7 @@ django-debug-toolbar = "*"
 request = "*"
 django-cleanup = "*"
 python-magic = "*"
+django-imagekit = "*"
 
 [requires]
 python_version = "3.7"
