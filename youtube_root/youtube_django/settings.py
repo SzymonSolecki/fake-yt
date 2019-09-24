@@ -26,7 +26,7 @@ SECRET_KEY = '!77fo5y9p_uz3l2g&5d+j1f=oem_ho=93!%z!$g@0e&z6pera7'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.100.17', 'localhost']
+ALLOWED_HOSTS = ['192.168.100.17', 'localhost', 'fake-yt.com']
 
 
 # Application definition
